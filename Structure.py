@@ -10,23 +10,27 @@ class Task:
     def add(self):
         try:
             with open("data.json", "r") as file:
-                tasks = json.load(file)
-            new_id = max(tasks["id"]) + 1
-            task = { "id": new_id,
-                     "description": self.description,
-                     "status": self.status,
-                     "created at": datetime.now().isoformat(),
-                     "updated at": datetime.now().isoformat(),
-                    }
-            tasks = tasks.append(task)
-            tasks = json.dumps(tasks, indent=4)
-        except FileNotFoundError:
-            task = { "id": 1,
-                     "description": self.description,
-                     "status": self.status,
-                     "created at": datetime.now().isoformat(),
-                     "updated at": datetime.now().isoformat(),
-                    }
-            tasks = json.dumps(task, indent=4)
+                tasks = json.load(file)  
+                if not isinstance(tasks, list):  
+                    tasks = []
+        except (FileNotFoundError, json.JSONDecodeError):
+            tasks = []
 
-            
+        new_id = max([t["id"] for t in tasks], default=0) + 1
+
+        now = datetime.now().isoformat()
+
+        new_task = {
+            "id": new_id,
+            "description": self.description,
+            "status": self.status,
+            "created at": now,
+            "updated at": now,
+        }
+
+        tasks.append(new_task)
+
+        with open("data.json", "w") as file:
+            json.dump(tasks, file, indent=4, ensure_ascii=False)
+
+        print(f"Task added succesfully, task id:{new_id}")
