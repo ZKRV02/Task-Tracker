@@ -1,4 +1,4 @@
-**Installation**
+**-INSTALLATION-**
 
 *1*
 ```bash
