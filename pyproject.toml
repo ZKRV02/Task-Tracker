@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "task-cli-tracker"
+version = "1.0.0"
+description = "A simple CLI Task Tracker"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+    { name = "ZKRV02" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[project.scripts]
+task-cli = "task_cli.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]  
