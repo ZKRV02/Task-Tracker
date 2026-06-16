@@ -19,3 +19,4 @@ build/
 *.swp
 data.json
 *.json
+.DS_Storegit 
