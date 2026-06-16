@@ -7,7 +7,7 @@ HOME_DIR = Path.home()
 DATA_FILE = HOME_DIR / ".task_tracker_data.json"
 
 class Task:
-    def __init__(self, description=None, status="todo", id=None,):
+    def __init__(self, description=None, status="todo", id=None):
         self.id = id
         self.description = description
         self.status = status
@@ -56,22 +56,24 @@ class Task:
         except (FileNotFoundError, json.JSONDecodeError):
             return "\n---Error: Data file not found.---\n"
 
-
-    def show(self):
+    def show(self, status_Filter=None):
         try:
             with open(DATA_FILE, "r", encoding="utf-8") as file:
                 tasks = json.load(file)
         except (FileNotFoundError, json.JSONDecodeError):
             tasks = []
+        
+        if status_Filter != None:
+            tasks = [s for s in tasks if s['status']==status_Filter]
 
         if not tasks:
             print("\n--- No tasks found ---\n")
             return
-
+        
         col_id = 4
-        col_status = 12
+        col_status = 15
         col_date = 18
-        full_width = 85
+        full_width = 90
         col_desc = full_width - col_id - col_status - (col_date * 2) - 3
 
         print("\n" + "=" * full_width)
@@ -84,6 +86,7 @@ class Task:
         ]
         print(" | ".join(headers))
         print("-" * full_width)
+
 
         for t in tasks:
             t_id = str(t.get("id")).ljust(col_id)
@@ -120,21 +123,25 @@ class Task:
              ("2. List:", "Show all tasks in the tracker"),
              ("3. Delete:", "Delete a task from the tracker"),
              ("4. Help:", "Show this help message"),
-             ("5. Update:", "Update a task in the tracker")
+             ("5. Update:", "Update a task in the tracker"),
+             ("6. Mark:", "Change status of a task in the tracker. (mark-in-progress, mark-done, mark-todo)")
             ]
         print("\n--- COMMANDS ---")
         for cmd, desc in commands:
             print(f"{cmd.ljust(12)}{desc}")
         print()
 
-    def update(self, id, new_description):   
+    def update(self, id, new_description=None, new_status=None):   
         try:  
             with open(DATA_FILE, "r", encoding="utf-8") as file:
               tasks = json.load(file) 
             for i in tasks:
                 if i["id"] == id:
-                    i['description'] = new_description
-                    date = datetime.now().strftime("%H:%M, %d.%m.%Y")
+                    if new_description != None:
+                        i['description'] = new_description
+                    if new_status !=None:
+                        i['status'] = new_status
+                    date = datetime.now().strftime("%H:%M %d.%m.%Y")
                     i['updated at'] = date
                     print("\n---Task updated successfully---\n")
                     break
@@ -144,3 +151,5 @@ class Task:
 
         except (FileNotFoundError, json.JSONDecodeError):
             return "\n---Error: Data file not found.---\n"
+        
+
